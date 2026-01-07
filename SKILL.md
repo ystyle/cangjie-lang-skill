@@ -265,6 +265,18 @@ if (条件) {
 }
 ```
 
+**if 作为表达式**（返回值）：
+
+```cj
+let a = 10
+let result = if (a > 5) {
+    "greater than 5"
+} else {
+    "5 or less"
+}
+// result = "greater than 5"
+```
+
 **模式匹配（let pattern）**：
 
 ```cj
@@ -369,12 +381,21 @@ func add(a: Int64, b: Int64): Int64 {
 }
 ```
 
-如果需要修改参数，必须显式使用 `var`：
+**重要说明**：方法（class/enum 的成员函数）的参数**不能使用 `var` 修饰符**。只有顶层函数可以使用 `var` 修饰参数。
 
 ```cj
+// 顶层函数可以使用 var
 func modify(var a: Int64): Int64 {
     a = a + 1  // 现在可以修改
     return a
+}
+
+// class 方法的参数不能使用 var
+class Example {
+    public func method(var a: Int64): Int64 {  // ❌ 编译错误
+        a = a + 1
+        return a
+    }
 }
 ```
 
@@ -466,13 +487,36 @@ enum RGBColor {
 
 **基本语法**：
 
-⚠️ **注意**：case 不需要 `{}` 括号
+⚠️ **注意**：case 不需要 `{}` 括号，且**使用 `{}` 会导致编译错误**
 
 ```cj
 match (待匹配值) {
     case 模式1 => 处理1
     case 模式2 => 处理2
     case _ => 默认处理  // 通配符
+}
+```
+
+**多行语句**：
+
+```cj
+match (value) {
+    case 1 => println("one")              // ✅ 单行直接写
+    case 2 => {
+        // ✅ 多行使用代码块，注意 { 在新行
+        println("two")
+        println("second number")
+    }
+    case _ => println("other")
+}
+```
+
+⚠️ **错误示例**：
+
+```cj
+match (value) {
+    case 1 => { println("one") }  // ❌ 编译错误：同一行不能使用 { }
+    case _ => println("other")
 }
 ```
 
@@ -612,6 +656,83 @@ enum Option<T> {
 #### 使用场景
 
 当需要表示某个类型可能有值，也可能没有值的时候使用。
+
+#### 常用方法
+
+##### 1. 空合并运算符 `??`
+
+```cj
+let optA: Option<Int64> = Option<Int64>.Some(42)
+let a: Int64 = optA ?? 0  // 如果 optA 是 None，则使用默认值 0
+```
+
+##### 2. 检查是否有值
+
+```cj
+let optA: Option<Int64> = Option<Int64>.Some(42)
+
+if (optA.isSome()) {
+    println("有值")
+}
+
+if (optA.isNone()) {
+    println("无值")
+}
+```
+
+##### 3. 模式匹配提取值
+
+```cj
+let optA: Option<Int64> = Option<Int64>.Some(42)
+
+if (let Option<Int64>.Some(a) <- optA) {
+    println("值是: ${a}")
+} else {
+    println("无值")
+}
+```
+
+##### 4. 短路返回
+
+```cj
+func getValue(): Option<Int64> {
+    // ... 一些逻辑
+    return Option<Int64>.None
+}
+
+func process(): Int64 {
+    let optA = getValue()
+    let a = optA ?? return 0  // 如果是 None，直接返回 0
+    // 继续处理 a
+    a + 1
+}
+```
+
+##### 5. 短路抛出异常
+
+```cj
+func getValue(): Option<Int64> {
+    return Option<Int64>.None
+}
+
+func processOrThrow(): Int64 {
+    let optA = getValue()
+    let a = optA ?? throw Exception("值不存在")
+    // 继续处理 a
+    a
+}
+```
+
+##### 6. match 表达式处理
+
+```cj
+let optA: Option<Int64> = Option<Int64>.Some(42)
+
+let result = match (optA) {
+    case Option<Int64>.Some(value) => "值是: ${value}"
+    case Option<Int64>.None => "无值"
+}
+```
 
 **示例参考**：`examples/07_option_type.cj`
 

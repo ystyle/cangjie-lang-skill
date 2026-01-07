@@ -8,6 +8,10 @@
  * - Option<T> 类型定义
  * - Some 和 None 的使用
  * - Option 类型的模式匹配
+ * - 空合并运算符 ??
+ * - isSome() 和 isNone() 方法
+ * - if 模式匹配提取值
+ * - 短路返回和短路抛出异常
  * - 使用 Option 处理可能的空值
  */
 // Option 类型定义（标准库已提供，这里仅作说明）
@@ -76,4 +80,51 @@ main() {
     } else {
         println("无值")
     }
+
+    // 示例4：空合并运算符 ??
+    println("\n=== 空合并运算符 ?? ===")
+    let optA: Option<Int64> = Option<Int64>.Some(42)
+    let optB: Option<Int64> = Option<Int64>.None
+
+    let a = optA ?? 0
+    let b = optB ?? 0
+
+    println("optA ?? 0 = ${a}")  // 输出: 42
+    println("optB ?? 0 = ${b}")  // 输出: 0
+
+    // 示例5：isSome() 和 isNone()
+    println("\n=== isSome() 和 isNone() ===")
+    if (optA.isSome()) {
+        println("optA 有值")
+    }
+
+    if (optB.isNone()) {
+        println("optB 无值")
+    }
+
+    // 示例6：短路返回
+    println("\n=== 短路返回 ===")
+    let result = processValue(Option<Int64>.None)
+    println("processValue 结果: ${result}")
+
+    // 示例7：短路抛出异常
+    println("\n=== 短路抛出异常 ===")
+    try {
+        let value = processOrThrow(Option<Int64>.None)
+        println("值: ${value}")
+    } catch (e: Exception) {
+        println("捕获异常: ${e.message}")
+    }
+}
+
+// 短路返回示例
+func processValue(opt: Option<Int64>): Int64 {
+    let value = opt ?? return 0  // 如果是 None，直接返回 0
+    value * 2  // 继续处理
+}
+
+// 短路抛出异常示例
+func processOrThrow(opt: Option<Int64>): Int64 {
+    let value = opt ?? throw Exception("值不存在")
+    value  // 继续处理
 }

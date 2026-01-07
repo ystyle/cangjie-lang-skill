@@ -111,18 +111,49 @@ func increment(a: Int64): Int64 {
 }
 ```
 
-**修正方案3：使用 `var` 声明可变参数**
+**修正方案3：使用 `var` 声明可变参数（仅限顶层函数）**
+
+⚠️ **重要**：只有**顶层函数**可以使用 `var` 修饰参数。**class/enum 的成员方法**不能使用 `var`。
+
 ```cj
+// ✅ 顶层函数可以使用 var
 func increment(var a: Int64): Int64 {
-    a = a + 1  // ✅ 现在可以修改了
+    a = a + 1  // 现在可以修改了
     return a
+}
+
+// ❌ class 方法的参数不能使用 var
+class Counter {
+    public func increment(var a: Int64): Int64 {  // 编译错误
+        a = a + 1
+        return a
+    }
+}
+```
+
+**class 中如何修改字段值？**
+
+在 class 中，如果需要修改字段值，应该通过成员方法直接修改字段，而不是修改参数：
+
+```cj
+class Counter {
+    private var value: Int64 = 0
+
+    public func increment(): Unit {
+        this.value = this.value + 1  // ✅ 修改字段值，而不是参数
+    }
+
+    public func add(delta: Int64): Unit {
+        this.value = this.value + delta  // ✅ 使用参数计算，但修改字段
+    }
 }
 ```
 
 **注意事项**：
+- 顶层函数可以使用 `var` 修饰参数，但应该谨慎使用
+- class/enum 的成员方法**不能使用 `var` 修饰参数**
 - 大多数情况下，应该避免修改函数参数，保持函数纯净
-- 如果确实需要修改，考虑使用局部变量或明确使用 `var`
-- 使用 `var` 时，调用者需要知道参数可能被修改
+- 在 class 中，应该直接修改字段值，而不是修改参数
 
 **参考章节**：SKILL.md 第2.4节
 

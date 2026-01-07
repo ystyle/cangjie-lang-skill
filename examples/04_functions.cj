@@ -2,11 +2,12 @@
  * 示例名称：函数定义与使用
  * 语法模块：第2.4节 - 函数
  * 难度：intermediate
- * ⚠️ 易错点：⚠️易错点8（函数参数默认是let不可变）、⚠️易错点9（Lambda可立即调用）
+ * ⚠️ 易错点：⚠️易错点8（函数参数默认是let不可变，方法不能使用var）、⚠️易错点9（Lambda可立即调用）
  *
  * 本示例演示：
  * - 函数定义
  * - 返回值简写
+ * - 函数参数不可变（let）
  * - Lambda表达式
  * - 高阶函数
  * - 函数类型
@@ -29,10 +30,18 @@ func tryModify(a: Int64): Int64 {
     return a
 }
 
-// 使用var声明可变参数
+// 顶层函数可以使用var声明可变参数
 func modify(var a: Int64): Int64 {
     a = a + 1  // 现在可以修改了
     return a
+}
+
+// ⚠️ 重要：class 方法的参数不能使用 var
+class Example {
+    public func method(var a: Int64): Int64 {  // ❌ 编译错误
+        a = a + 1
+        return a
+    }
 }
 
 // 高阶函数（函数作为参数）

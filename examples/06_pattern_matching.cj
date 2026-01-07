@@ -12,6 +12,7 @@
  * - 类型模式
  * - enum 模式
  * - 模式嵌套
+ * - case 多行语句（不需要{}）
  */
 // 基础类型示例
 class Base {
@@ -46,6 +47,22 @@ func patternMatchingExamples() {
         case _ => "other"
     }
     println(result1)
+
+    // 1.5 case 多行语句示例
+    println("\n=== case 多行语句 ===")
+    let y = 10
+    match (y) {
+        case 1 => {
+            println("one")
+            println("first number")  // ✅ 可以使用代码块
+        }
+        case 10 => {
+            println("ten")
+            println("lucky number")
+            println("perfect score")
+        }
+        case _ => println("other")
+    }
 
     // 2. 绑定模式
     println("\n=== 绑定模式 ===")

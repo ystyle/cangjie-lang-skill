@@ -6,6 +6,7 @@
  *
  * 本示例演示：
  * - if-else 条件判断（必须有括号）
+ * - if 作为表达式（返回值）
  * - while 循环
  * - do-while 循环
  * - for-in 区间遍历
@@ -19,6 +20,14 @@ main() {
     } else {
         println("x is 5 or less")
     }
+
+    // if 作为表达式（返回值）
+    let result = if (x > 5) {
+        "greater than 5"
+    } else {
+        "5 or less"
+    }
+    println("result: ${result}")  // 输出: result: greater than 5
 
     // while 循环
     var i = 0
