@@ -1,0 +1,1259 @@
+# 仓颉语言代码生成与分析工作手册
+
+```yaml
+name: "cangjie-lang"
+description: "仓颉（Cangjie）编程语言代码生成与分析专家手册 - 提供39个代码示例、19个易错点检查、完整的语法规则和模式匹配指南，专注于代码生成和代码分析两大核心场景"
+version: "1.0.0"
+author: "Cangjie Language Community"
+tags:
+  - "cangjie"
+  - "programming-language"
+  - "code-generation"
+  - "code-analysis"
+  - "chinese-language"
+  - "syntax-guide"
+capabilities:
+  - "generate-cangjie-code"
+  - "analyze-cangjie-code"
+  - "pattern-matching"
+  - "type-system"
+  - "error-detection"
+difficulty: "intermediate"
+scenarios:
+  - "生成仓颉语言代码"
+  - "分析仓颉代码语法"
+  - "检测常见错误模式"
+  - "提供代码修正建议"
+resources:
+  - "examples/ - 39个代码示例"
+  - "templates/ - 15-20个代码模板"
+  - "reference/ - 10个参考章节"
+  - "MCP - 仓颉文档查询"
+```
+
+---
+
+## 目录
+
+- [第1章：语言基础定义](#第1章语言基础定义)
+- [第2章：核心语法规则](#第2章核心语法规则)
+  - [2.1 变量声明](#21-变量声明)
+  - [2.2 基础类型](#22-基础类型)
+  - [2.3 表达式与控制流](#23-表达式与控制流)
+  - [2.4 函数](#24-函数)
+  - [2.5 枚举类型](#25-枚举类型)
+  - [2.6 模式匹配](#26-模式匹配)
+  - [2.7 Option类型](#27-option类型)
+  - [2.8 class类型](#28-class类型)
+  - [2.9 单元测试](#29-单元测试)
+  - [2.10 错误处理](#210-错误处理)
+  - [2.11 速查手册](#211-速查手册)
+- [第3章：任务处理流程](#第3章任务处理流程)
+  - [3.1 代码生成流程](#31-代码生成流程)
+  - [3.2 代码分析流程](#32-代码分析流程)
+- [第4章：19个⚠️易错点检查清单](#第4章19个易错点检查清单)
+- [第5章：示例与模板参考](#第5章示例与模板参考)
+- [第6章：质量控制标准](#第6章质量控制标准)
+- [第7章：MCP文档集成](#第7章mcp文档集成)
+
+---
+
+## 第1章：语言基础定义
+
+### 1.1 文件与后缀
+
+- **文件后缀**：`.cj`
+- **语言简称**：`cj`（Cangjie）
+- **入口函数**：`main()`
+
+### 1.2 注释
+
+```cj
+// 单行注释
+
+/*
+ * 多行注释
+ */
+
+/**
+ * 文档注释
+ */
+```
+
+### 1.3 代码块结构
+
+```cj
+main() {
+    // 代码主体
+    let a: Int64 = 20
+    var b: Int64 = 12
+    println("${a}${b}")
+}
+```
+
+---
+
+## 第2章：核心语法规则
+
+### 2.1 变量声明
+
+#### 语法格式
+
+```cj
+修饰符 变量名: 变量类型 = 初始值
+```
+
+#### 可变性修饰符
+
+- `let` - **不可变变量**（只能赋值一次，初始化后不可修改）
+- `var` - **可变变量**（可以被多次赋值）
+
+⚠️ **易错点1**：`let` 不支持变量遮蔽（shadowing），不能在同一作用域内重新定义同名变量。
+
+#### 可见性修饰符
+
+| 修饰符 | 范围 | 默认值 |
+|--------|------|--------|
+| `private` | class定义内可见 | ❌ |
+| `public` | 模块内外均可见 | ❌ |
+| `protected` | 当前模块及当前类的子类可见 | ❌ |
+| `internal` | 仅当前包及子包内可见 | ✅ **默认** |
+
+#### 静态性修饰符
+
+- `static` - 影响成员变量的存储和引用方式
+
+#### 示例代码
+
+```cj
+main() {
+    let a: Int64 = 20      // 不可变变量
+    var b: Int64 = 12      // 可变变量
+    b = 23                // 可以修改var变量
+    println("${a}${b}")
+}
+```
+
+**示例参考**：`examples/01_variable_declaration.cj`
+
+---
+
+### 2.2 基础类型
+
+#### 数值类型
+
+**有符号整数**：`Int8`、`Int16`、`Int32`、`Int64`、`IntNative`
+
+**无符号整数**：`UInt8`、`UInt16`、`UInt32`、`UInt64`、`UIntNative`
+
+**浮点类型**：`Float16`、`Float32`、`Float64`
+
+**布尔类型**：`true`、`false`
+
+#### 字符类型（Rune）
+
+- 使用 `Rune` 表示，可以表示 Unicode 字符集中的所有字符
+- **Rune → UInt32**：`UInt32(e)` - 获取 Unicode scalar value
+- **整数 → Rune**：`Rune(num)` - 值必须在有效 Unicode 范围内
+  - 有效范围：`[0x0000, 0xD7FF]` 或 `[0xE000, 0x10FFFF]`
+
+⚠️ **易错点2**：Rune 转整数时需确保在有效 Unicode 范围内，否则会编译错误或运行时抛异常。
+
+#### 转义字符
+
+```cj
+let slash: Rune = r'\\'
+let newLine: Rune = r'\n'
+let tab: Rune = r'\t'
+```
+
+#### Unicode 字面量
+
+```cj
+let he: Rune = r'\u{4f60}'   // 你
+let llo: Rune = r'\u{597d}'   // 好
+```
+
+#### 字符串类型（String）
+
+**基本用法**：
+```cj
+let s2 = "Hello Cangjie Lang"
+```
+
+**插值字符串**：
+
+⚠️ **易错点3**：插值字符串中使用 `${}` 表达式（不是 `{}`）
+
+```cj
+let fruit = "apples"
+let count = 10
+let s = "There are ${count * count} ${fruit}"
+```
+
+**多行原始字符串字面量**：
+
+⚠️ **易错点4**：以井号（`#`）和引号开头/结尾，**转义规则不适用**
+
+```cj
+let s1: String = #""#                              // 空字符串
+let s2 = ##'\n'##                                  // \n 不是换行符，是 \ 和 n 两个字符
+let s3 = ###"
+    Hello,
+    Cangjie
+    Lang"###
+```
+
+#### 元组（Tuple）
+
+- **类型表示**：`(T1, T2, ..., TN)`
+- **至少二元**：`(Int64, Float64)`、`(Int64, Float64, String)`
+- **索引访问**：`tuple[0]`、`tuple[1]`
+
+```cj
+var tuple = (true, false)
+println(tuple[0])
+```
+
+#### 数组类型
+
+```cj
+Array<T>  // T 是元素类型，可以是任意类型
+```
+
+#### 区间类型（Range）
+
+- **类型表示**：`Range<T>`（泛型）
+- **包含三个值**：`start`、`end`、`step`
+- **约束**：
+  - `start` 和 `end` 类型相同（T）
+  - `step` 类型是 `Int64`
+  - `step` 值不能等于 0
+
+#### Unit 类型
+
+- **唯一值**：`()`
+- **支持操作**：仅赋值、判等、判不等
+- ⚠️ **不支持**：其他所有操作
+
+**示例参考**：`examples/02_basic_types.cj`
+
+---
+
+### 2.3 表达式与控制流
+
+#### 条件表达式
+
+⚠️ **易错点5**：条件表达式的括号不能省略，这是与很多语言的差异。
+
+```cj
+if (条件) {        // ✅ 必须有括号
+    分支 1
+} else {
+    分支 2
+}
+```
+
+#### if 表达式
+
+**基本形式**：
+```cj
+if (条件) {
+    分支 1
+} else {
+    分支 2
+}
+```
+
+**模式匹配（let pattern）**：
+
+```cj
+let a = Some(3)
+let d = Some(1)
+if (let Some(e) <- a && let Some(f) <- d) {  // 两个模式都匹配
+    println("${e} ${f}")  // 输出: 3 1
+}
+```
+
+#### while 表达式
+
+```cj
+while (条件) {
+    循环体
+}
+
+// do-while 形式
+do {
+    循环体
+} while (条件)
+```
+
+#### for-in 表达式
+
+```cj
+for (迭代变量 in 序列) {
+    循环体
+}
+```
+
+**元组遍历**：
+```cj
+let array = [(1, 2), (3, 4), (5, 6)]
+for ((x, y) in array) {
+    println("${x}, ${y}")
+}
+```
+
+**区间遍历**：
+```cj
+main() {
+    var sum = 0
+    for (i in 1..=100) {    // 1 到 100（包含）
+        sum += i
+    }
+    println(sum)
+}
+```
+
+#### 跳转控制
+
+- 支持 `break`、`continue`
+- ⚠️ **易错点6**：不支持标签跳转
+- ⚠️ **易错点7**：完全不支持 `goto`
+
+**示例参考**：`examples/03_control_flow.cj`
+
+---
+
+### 2.4 函数
+
+#### 函数是一等公民
+
+- 可以作为函数的参数或返回值
+- 可以赋值给变量
+- 函数本身也有类型
+
+#### 函数类型
+
+**语法**：`(参数类型) -> 返回类型`
+
+- 参数类型用 `()` 括起，多个参数用 `,` 分隔
+- 参数类型和返回类型用 `->` 连接
+
+```cj
+func add(a: Int64, b: Int64): Int64 {
+    return a + b
+}
+
+type FnType = (Int64) -> Unit
+
+func display(a: Int64): Unit {
+    println(a)
+}
+
+// 命名参数
+func name(name!:String)
+
+// 命名参数还可以设置默认值
+func name(name!:String = "小王")
+```
+
+#### 函数参数
+
+⚠️ **易错点8**：函数参数默认是 `let` 定义的不可变变量
+
+```cj
+// a 和 b 都是不可变的
+func add(a: Int64, b: Int64): Int64 {
+    return a + b
+}
+```
+
+如果需要修改参数，必须显式使用 `var`：
+
+```cj
+func modify(var a: Int64): Int64 {
+    a = a + 1  // 现在可以修改
+    return a
+}
+```
+
+#### 返回值简写
+
+```cj
+func add(a: Int64, b: Int64): Int64 {
+    a + b  // 最后一个表达式自动作为返回值
+}
+
+func returnAdd(): (Int64, Int64) -> Int64 {
+    add  // 可以直接返回函数
+}
+```
+
+#### Lambda 表达式
+
+**语法**：
+```cj
+{ p1: T1, ..., pn: Tn => expressions | declarations }
+```
+
+**示例**：
+```cj
+// 完整类型声明
+let f1 = { a: Int64, b: Int64 => a + b }
+
+// 无参 Lambda
+var display = { =>
+    println("Hello")
+    println("World")
+}
+
+// 类型推断
+var sum1: (Int64, Int64) -> Int64 = { a, b => a + b }
+var sum2: (Int64, Int64) -> Int64 = { a: Int64, b => a + b }
+
+// Lambda 作为参数
+func f(a1: (Int64) -> Int64): Int64 {
+    a1(1)
+}
+
+main(): Int64 {
+    f({ a2 => a2 + 10 })  // 参数类型推断
+}
+```
+
+**Lambda 立即调用**：
+
+⚠️ **易错点9**：Lambda 表达式可以立即调用
+
+```cj
+let r2 = { => 123 }()  // r2 = 123，立即执行
+var g = { x: Int64 => println("x = ${x}") }
+g(2)  // 调用 Lambda
+```
+
+**示例参考**：`examples/04_functions.cj`
+
+---
+
+### 2.5 枚举类型
+
+#### 定义语法
+
+- 以 `enum` 开头
+- 构造器之间使用 `|` 分隔
+- **至少存在一个有名字的构造器**
+- 第一个构造器之前的 `|` 是可选的
+
+```cj
+enum RGBColor {
+    | Red(UInt8) | Green(UInt8) | Blue(UInt8)
+}
+```
+
+#### 构造器类型
+
+- **无参构造器**：`C`
+- **有参构造器**：`C(p1, p2, ..., pn)`
+
+**示例参考**：`examples/05_enum.cj`
+
+---
+
+### 2.6 模式匹配
+
+#### match 表达式
+
+**基本语法**：
+
+⚠️ **注意**：case 不需要 `{}` 括号
+
+```cj
+match (待匹配值) {
+    case 模式1 => 处理1
+    case 模式2 => 处理2
+    case _ => 默认处理  // 通配符
+}
+```
+
+**示例**：
+```cj
+main() {
+    let x = 0
+    match (x) {
+        case 1 => print("x = 1")
+        case 0 => print("x = 0")        // 匹配
+        case 2 | 3 | 4 => print("other")  // 多值匹配
+        case _ => print("其他")
+    }
+}
+```
+
+#### 模式类型详解
+
+##### 1. 常量模式
+
+支持：整数字面量、浮点数字面量、字符字面量、布尔字面量、字符串字面量、Unit 字面量
+
+⚠️ **易错点10**：不支持字符串插值
+
+##### 2. 通配符模式
+
+使用 `_` 表示，匹配任意值，通常作为最后一个 case
+
+##### 3. 绑定模式
+
+使用标识符，匹配并绑定值
+
+```cj
+main() {
+    let x = -10
+    let y = match (x) {
+        case 0 => "zero"
+        case n => "x is not zero and x = ${n}"  // n 绑定匹配的值
+    }
+    println(y)
+}
+```
+
+##### 4. Tuple 模式
+
+用于匹配元组值
+
+```cj
+main() {
+    let tv = ("Alice", 24)
+    let s = match (tv) {
+        case ("Bob", age) => "Bob is ${age} years old"
+        case ("Alice", age) => "Alice is ${age} years old"  // age 是绑定模式
+        case (name, 100) => "${name} is 100 years old"
+        case (_, _) => "someone"
+    }
+    println(s)
+}
+```
+
+##### 5. 类型模式
+
+判断运行时类型是否是某个类型的子类型
+
+```cj
+main() {
+    var d = Derived()
+    var r = match (d) {
+        case b: Base => b  // b 是类型模式，匹配 Base 类型
+        case _ => 0
+    }
+    println("r = ${r}")
+}
+```
+
+##### 6. enum 模式
+
+用于匹配 enum 类型的实例
+
+```cj
+enum TimeUnit {
+    | Year(UInt64)
+    | Month(UInt64)
+}
+
+main() {
+    let x = Year(2)
+    let s = match (x) {
+        case Year(n) => "x has ${n * 12} months"      // 匹配
+        case TimeUnit.Month(n) => "x has ${n} months"  // TimeUnit.Month 是完整路径
+    }
+    println(s)
+}
+```
+
+#### 模式嵌套
+
+⚠️ **重要**：Tuple 模式和 enum 模式可以嵌套任意模式
+
+```cj
+enum TimeUnit {
+    | Year(UInt64)
+    | Month(UInt64)
+}
+
+enum Command {
+    | SetTimeUnit(TimeUnit)
+    | GetTimeUnit
+    | Quit
+}
+
+main() {
+    let command = (SetTimeUnit(Year(2022)), SetTimeUnit(Year(2024)))
+    match (command) {
+        case (SetTimeUnit(Year(year)), _) => println("Set year ${year}")
+        case (_, SetTimeUnit(Month(month))) => println("Set month ${month}")
+        case _ => ()
+    }
+}
+```
+
+**示例参考**：`examples/06_pattern_matching.cj`
+
+---
+
+### 2.7 Option类型
+
+#### 定义
+
+```cj
+enum Option<T> {
+    | Some(T)   // 有值
+    | None      // 无值
+}
+```
+
+#### 使用场景
+
+当需要表示某个类型可能有值，也可能没有值的时候使用。
+
+**示例参考**：`examples/07_option_type.cj`
+
+---
+
+### 2.8 class类型
+
+#### 定义语法
+
+```cj
+class ClassName {
+    // 成员变量
+    // 成员属性
+    // 静态初始化器
+    // 构造函数
+    // 成员函数
+    // 操作符函数
+}
+```
+
+#### 示例
+
+```cj
+class Rectangle {
+    let width: Int64
+    let height: Int64
+
+    public init(width: Int64, height: Int64) {
+        this.width = width
+        this.height = height
+    }
+
+    public func area() {
+        width * height
+    }
+}
+
+let rec = Rectangle(10, 20)
+let l = rec.height  // l = 20
+```
+
+#### 访问修饰符
+
+对于 class 的成员（变量、属性、构造函数、函数）：
+
+| 修饰符 | 含义 | **默认** |
+|--------|------|---------|
+| `private` | class 定义内可见 | ❌ |
+| `internal` | 当前包及子包（含子包的子包）内可见 | ✅ **默认** |
+| `protected` | 当前模块及当前类的子类可见 | ❌ |
+| `public` | 模块内外均可见 | ❌ |
+
+⚠️ **易错点11**：成员的默认访问修饰符是 `internal`，不是 `private` 或 `public`。
+
+**示例参考**：`examples/08_class.cj`
+
+---
+
+### 2.9 单元测试
+
+#### 测试宏
+
+- `@Test` - 应用于顶级函数或类，转换为单元测试类
+- `@TestCase` - 标记测试类内的函数为测试用例
+- `@Fail` - 标记测试失败
+
+#### 断言宏
+
+##### Assert 断言（失败停止用例）
+
+```cj
+@Assert(leftExpr, rightExpr)      // 判断相等
+@Assert(condition: Bool)          // 判断条件
+```
+
+##### Expect 断言（失败继续执行）
+
+```cj
+@Expect(leftExpr, rightExpr)      // 判断相等
+@Expect(condition: Bool)          // 判断条件
+```
+
+#### 完整示例
+
+```cj
+@Test
+class LexerTest {
+    @TestCase
+    func test() {
+        let a = 1
+
+        // 方式一：手动判断
+        if (a != 1) {
+            @Fail("a is not 1")
+        }
+
+        // 方式二：Assert 条件
+        @Assert(a != 1)
+
+        // 方式三：Assert 相等
+        @Assert(a, 1)
+    }
+}
+```
+
+**示例参考**：`examples/09_unit_test.cj`
+
+---
+
+### 2.10 错误处理
+
+#### 基础异常处理
+
+```cj
+// 抛出异常
+throw Exception("错误信息")
+
+// 捕获异常
+try {
+    // 可能抛出异常的代码
+} catch (e: ExceptionType) {
+    // 处理异常
+}
+```
+
+**示例参考**：`examples/10_error_handling.cj`
+
+---
+
+### 2.11 速查手册
+
+#### 代码块结构
+
+```cj
+main() {
+    // 条件判断（必须有括号）
+    if (条件) {
+        // ...
+    } else {
+        // ...
+    }
+
+    // 循环
+    while (条件) { }
+    do { } while (条件)
+    for (变量 in 序列) { }
+
+    // 模式匹配
+    match (值) {
+        case 模式 => 处理
+        case _ => 默认
+    }
+}
+```
+
+#### 类型后缀速查
+
+| 类型 | 后缀 |
+|------|------|
+| 整数 | `Int8`, `Int16`, `Int32`, `Int64`, `IntNative` |
+| 无符号整数 | `UInt8`, `UInt16`, `UInt32`, `UInt64`, `UIntNative` |
+| 浮点 | `Float16`, `Float32`, `Float64` |
+| 字符 | `Rune` |
+| 字符串 | `String` |
+| 元组 | `(T1, T2, ...)` |
+| 数组 | `Array<T>` |
+| 区间 | `Range<T>` |
+| 函数 | `(T1, T2) -> Rt` |
+
+**示例参考**：`examples/11_quick_reference.cj`
+
+---
+
+## 第3章：任务处理流程
+
+### 3.1 代码生成流程
+
+#### 场景1：基础代码生成
+
+**需求识别**：
+- 识别变量类型（let/var）
+- 确定数据类型（Int64, String, Rune等）
+- 判断是否需要类型标注
+
+**生成步骤**：
+1. 加载对应模板（从 `templates/` 目录）
+2. 应用语法规则（对照第2章）
+3. ⚠️ **检查19个易错点**
+4. 生成最终代码
+
+**示例模板**：
+```cj
+// templates/basic/variable_declaration.cj.template
+{{MODIFIER}} {{VARIABLE_NAME}}: {{TYPE}} = {{INIT_VALUE}}
+```
+
+#### 场景2：函数定义生成
+
+**需求识别**：
+- 函数名和参数列表
+- 参数类型和返回类型
+- 是否需要命名参数
+- 是否需要默认值
+
+**生成步骤**：
+1. 加载函数定义模板
+2. 确定参数是否需要 `var` 修饰（默认let）
+3. 检查返回值类型
+4. 应用⚠️易错点8（函数参数默认不可变）
+
+#### 场景3：控制流生成
+
+**需求识别**：
+- 条件判断/循环/模式匹配
+- 是否需要括号（⚠️必须加括号）
+- 是否需要模式匹配
+
+**生成步骤**：
+1. 选择合适的控制结构
+2. ⚠️确保条件表达式有括号（易错点5）
+3. 检查是否需要 `break`/`continue`（不支持标签，易错点6/7）
+4. 生成代码
+
+#### 场景4：class定义生成
+
+**需求识别**：
+- 类名和成员变量
+- 构造函数
+- 成员函数
+- 访问修饰符
+
+**生成步骤**：
+1. 加载class模板
+2. ⚠️应用默认访问修饰符 `internal`（易错点11）
+3. 生成构造函数
+4. 生成成员函数
+
+#### 场景5：模式匹配生成
+
+**需求识别**：
+- match表达式或if模式匹配
+- 模式类型（常量/通配符/绑定/Tuple/enum/类型）
+- 是否需要模式嵌套
+
+**生成步骤**：
+1. 选择匹配模式
+2. ⚠️检查case顺序（按顺序匹配）
+3. ⚠️确保通配符在最后（易错点9）
+4. 生成匹配代码
+
+#### 场景6：单元测试生成
+
+**需求识别**：
+- 测试类和测试用例
+- 断言类型（Assert/Expect）
+- 测试数据
+
+**生成步骤**：
+1. 加载测试模板
+2. 添加 `@Test` 和 `@TestCase` 宏
+3. 选择断言类型
+4. 生成测试代码
+
+---
+
+### 3.2 代码分析流程
+
+#### 场景1：语法正确性分析
+
+**分析步骤**：
+1. 解析代码结构
+2. 对照第2章11个语法模块检查
+3. ⚠️对照19个易错点清单（第4章）
+4. 提供修正建议
+
+**检查项**：
+- 变量声明是否正确（let/var）
+- 类型标注是否正确或可推断
+- 条件表达式是否有括号⚠️
+- 字符串插值是否使用 `${}`⚠️
+- 函数参数是否被修改（或明确使用var）⚠️
+- 访问修饰符是否符合需求（默认internal）⚠️
+
+#### 场景2：潜在错误检测
+
+**分析步骤**：
+1. 识别可能触发19个⚠️易错点的代码模式
+2. 分析运行时行为
+3. 提供具体修正建议
+
+**重点检测**：
+- let变量遮蔽⚠️
+- Rune转换范围⚠️
+- 原始字符串转义⚠️
+- break/continue标签跳转⚠️
+- Unit类型非法操作⚠️
+- match case顺序⚠️
+
+#### 场景3：代码优化建议
+
+**分析步骤**：
+1. 检查代码风格和最佳实践
+2. 提供优化建议
+3. 推荐使用合适的模板和示例
+
+**优化项**：
+- 是否可以使用Lambda简化代码
+- 是否可以使用模式匹配替代复杂的if-else
+- 是否应该使用Option类型处理可能的空值
+- 是否应该使用enum提高类型安全性
+
+---
+
+## 第4章：19个⚠️易错点检查清单
+
+### 变量相关
+
+1. ⚠️ **`let` 不支持变量遮蔽**
+   - 错误：在同一作用域重新定义同名let变量
+   - 修正：使用不同的变量名或使用var
+   - 参考：第2.1节
+
+2. ⚠️ **函数参数默认是 `let` 不可变的**
+   - 错误：在函数内修改参数值
+   - 修正：使用 `var` 显式声明可变参数
+   - 参考：第2.4节
+
+3. ⚠️ **成员变量默认访问修饰符是 `internal`**
+   - 错误：误认为默认是 `private`
+   - 修正：根据需求显式声明访问修饰符
+   - 参考：第2.8节
+
+### 控制流相关
+
+4. ⚠️ **所有条件表达式必须有括号**
+   - 错误：`if x > 0 { }`
+   - 修正：`if (x > 0) { }`
+   - 参考：第2.3节
+
+5. ⚠️ **不支持 `goto`**
+   - 错误：使用goto语句
+   - 修正：重构代码结构，使用函数或循环控制
+   - 参考：第2.3节
+
+6. ⚠️ **`break`/`continue` 不支持标签跳转**
+   - 错误：`break outerLoop;`
+   - 修正：重构嵌套循环逻辑
+   - 参考：第2.3节
+
+### 类型转换相关
+
+7. ⚠️ **Rune 转整数需确保在有效 Unicode 范围**
+   - 错误：`Rune(0xD800)` （代理区字符）
+   - 修正：确保值在 `[0x0000, 0xD7FF]` 或 `[0xE000, 0x10FFFF]`
+   - 参考：第2.2节
+
+8. ⚠️ **原始字符串字面量中转义字符不会被转义**
+   - 错误：认为 `##"\n"##` 会产生换行符
+   - 修正：使用普通字符串 `"\\n"` 或理解原始字符串特性
+   - 参考：第2.2节
+
+### 模式匹配相关
+
+9. ⚠️ **match 表达式的 case 按顺序匹配**
+   - 错误：将具体case放在通配符之后
+   - 修正：将具体case放在前面，通配符 `_` 放在最后
+   - 参考：第2.6节
+
+10. ⚠️ **常量模式不支持字符串插值**
+    - 错误：在match的case中使用 `"Hello ${name}"`
+    - 修正：使用绑定模式或运行时计算
+    - 参考：第2.6节
+
+### 字符串相关
+
+11. ⚠️ **插值字符串使用 `${}` 而非 `{}`**
+    - 错误：`"Hello {name}"`
+    - 修正：`"Hello ${name}"`
+    - 参考：第2.2节
+
+### 函数相关
+
+12. ⚠️ **Lambda 表达式可以立即调用**
+    - 说明：`{ => 123 }()` 是合法语法，立即执行Lambda
+    - 参考：第2.4节
+
+### 类型系统相关
+
+13. ⚠️ **Unit 类型只支持赋值、判等、判不等操作**
+    - 错误：对 `()` 进行其他操作（如算术运算）
+    - 修正：理解Unit类型的限制
+    - 参考：第2.2节
+
+### 其他
+
+14. ⚠️ **元组至少需要两个元素**
+    - 错误：定义单元素元组
+    - 修正：使用具体类型或添加第二个元素
+    - 参考：第2.2节
+
+15. ⚠️ **区间类型的 step 不能等于 0**
+    - 错误：`Range(1, 10, 0)`
+    - 修正：确保step非零
+    - 参考：第2.2节
+
+16. ⚠️ **enum 至少存在一个有名字的构造器**
+    - 错误：定义空enum
+    - 修正：至少添加一个构造器
+    - 参考：第2.5节
+
+17. ⚠️ **match 表达式的 case 不需要 `{}` 括号**
+    - 错误：`case 1 => { println("1") }`
+    - 修正：`case 1 => println("1")`
+    - 参考：第2.6节
+
+18. ⚠️ **Option 类型用于表示可能有值或无值**
+    - 说明：不是所有情况都需要Option，仅当需要明确表示可能无值时使用
+    - 参考：第2.7节
+
+19. ⚠️ **Duration 和 sleep 在 `std.core` 里不需导入**
+    - 说明：这些是内置类型和函数，可直接使用
+    - 参考：第2.10节
+
+---
+
+## 第5章：示例与模板参考
+
+### 5.1 代码示例（examples/）
+
+共39个示例，按难度和语法模块分类：
+
+**基础示例（01-15）**：
+- 01_variable_declaration.cj - 变量声明
+- 02_basic_types.cj - 基础类型
+- 03_control_flow.cj - 控制流
+- 04_functions.cj - 函数
+- 05_enum.cj - 枚举
+- 06_pattern_matching.cj - 模式匹配
+- 07_option_type.cj - Option类型
+- 08_class.cj - class类型
+- 09_unit_test.cj - 单元测试
+- 10_error_handling.cj - 错误处理
+- 11_quick_reference.cj - 速查手册
+- 12-15：更多基础示例
+
+**中级示例（16-27）**：
+- Lambda表达式和高阶函数
+- 复杂模式匹配
+- class继承和多态
+- 集合操作
+- 异常处理
+- 测试用例编写
+
+**高级示例（28-39）**：
+- 综合应用案例
+- 性能优化技巧
+- 最佳实践展示
+
+### 5.2 代码模板（templates/）
+
+按场景组织：
+
+**basic/**：
+- hello_world.cj.template
+- package_structure.cj.template
+- main_function.cj.template
+
+**functions/**：
+- function_definition.cj.template
+- lambda.cj.template
+- higher_order_function.cj.template
+
+**control_flow/**：
+- conditional_logic.cj.template
+- loops.cj.template
+- error_handling.cj.template
+
+**data_structures/**：
+- class_definition.cj.template
+- enum_definition.cj.template
+- collection_operations.cj.template
+
+**testing/**：
+- unit_test.cj.template
+- test_case.cj.template
+
+---
+
+## 第6章：质量控制标准
+
+### 6.1 代码生成质量检查
+
+生成代码时必须确保：
+
+- [ ] ⚠️条件表达式都有括号
+- [ ] ⚠️字符串插值使用 `${}`
+- [ ] ⚠️函数参数未被修改（或明确使用 var）
+- [ ] ⚠️访问修饰符符合需求（默认internal）
+- [ ] 类型标注正确或可推断
+- [ ] 模式匹配覆盖所有情况
+- [ ] ⚠️未触犯19个易错点
+
+### 6.2 代码分析质量检查
+
+分析代码时必须提供：
+
+- [ ] 对照11个语法模块检查
+- [ ] ⚠️对照19个易错点检查
+- [ ] 类型系统一致性验证
+- [ ] 提供具体修正建议
+- [ ] 标注易错点编号（如 ⚠️易错点5）
+
+### 6.3 响应质量标准
+
+- **准确性**：语法规则必须正确
+- **完整性**：覆盖所有相关语法点
+- **实用性**：提供可执行的代码示例
+- **可读性**：添加清晰的注释和说明
+- **⚠️易错点标注**：明确标注19个易错点
+
+---
+
+## 第7章：MCP文档集成
+
+### 7.1 MCP工具使用策略
+
+**优先级**：
+1. **本SKILL.md**（核心语法手册）
+2. **reference/**（详细参考手册）
+3. **MCP文档**（官方完整文档）
+
+**触发条件**：
+- 查询标准库API（std、stdx）
+- 查询高级特性（泛型、并发、宏等）
+- 查询官方文档中的最新特性
+- 需要更详细的说明和示例
+
+### 7.2 MCP工具列表
+
+当前可用的MCP工具：
+
+1. **search_documents** - 搜索仓颉文档
+   - 用途：根据关键词搜索相关文档
+   - 示例：查询"lambda closure 高阶函数"
+
+2. **get_document_content** - 获取文档内容
+   - 用途：获取指定文档的完整内容
+   - 支持按章节获取（section参数）
+
+3. **list_documents** - 列出文档
+   - 用途：浏览文档结构
+   - 支持路径导航（类似ls命令）
+
+4. **get_document_overview** - 获取文档总览
+   - 用途：查看分类结构和导航树
+   - 支持树形视图（view_type="tree"）
+
+### 7.3 使用示例
+
+```python
+# 查询lambda相关文档
+search_documents(query="lambda closure")
+
+# 获取某个文档的特定章节
+get_document_content(
+    doc_id="manual_source_zh_cn_functions",
+    section="lambda"
+)
+
+# 浏览标准库结构
+list_documents(category="libs", subcategory="std")
+```
+
+### 7.4 文档分类
+
+- **manual** - 基础手册
+- **libs** - 标准库（std、stdx）
+- **ohos** - OpenHarmony文档
+- **tools** - 开发工具
+- **extra** - 额外内容
+
+---
+
+## 附录A：快速参考
+
+### A.1 关键字
+
+`let`、`var`、`if`、`else`、`while`、`do`、`for`、`match`、`case`、`func`、`class`、`enum`、`init`、`return`、`package`、`import`、`public`、`private`、`protected`、`internal`、`static`
+
+### A.2 操作符
+
+- 算术：`+`、`-`、`*`、`/`、`%`
+- 比较：`==`、`!=`、`<`、`>`、`<=`、`>=`
+- 逻辑：`&&`、`||`、`!`
+- 范围：`..`、`..=`
+- 模式匹配：`<-`、`=>`
+
+### A.3 常用标准库
+
+- `std.core` - 核心类型和函数
+- `std.io` - 输入输出
+- `std.collection` - 集合类型
+- `std.time` - 时间和日期
+
+---
+
+## 附录B：版本历史
+
+- **v1.0.0** (2025-01-07) - 初始版本
+  - 包含11个核心语法模块
+  - 39个代码示例
+  - 19个⚠️易错点
+  - 完整的代码生成和分析流程
+
+---
+
+## 附录C：贡献指南
+
+欢迎贡献新的示例、模板和改进建议！
+
+**贡献方式**：
+1. Fork仓库
+2. 创建feature分支
+3. 提交改动
+4. 发起Pull Request
+
+**质量要求**：
+- 代码必须符合仓颉语法规范
+- 示例必须有清晰注释
+- 模板必须有使用说明
+- 文档必须标注相关语法模块和易错点
+
+---
+
+## 附录D：许可证
+
+MIT License
+
+---
+
+**结束**
+
+**文档维护**：仓颉语言社区
+**最后更新**：2025-01-07
+**版本**：v1.0.0

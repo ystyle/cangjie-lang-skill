@@ -1,0 +1,47 @@
+/**
+ * 模板名称：Class 定义
+ * 使用场景：定义仓颉 class 类型
+ * 语法模块：第2.8节 - class类型
+ * 示例参考：examples/08_class.cj
+ *
+ * 可配置参数：
+ * - CLASS_NAME: 类名
+ * - MEMBER_NAME: 成员变量名（多个）
+ * - MEMBER_TYPE: 成员变量类型（多个）
+ * - ACCESS_MODIFIER: 访问修饰符
+ * - MEMBER_ACCESS: 成员访问修饰符
+ */
+
+// 基本类定义
+{{ACCESS_MODIFIER}} class {{CLASS_NAME}} {
+    // 成员变量
+    // ⚠️ 易错点11：成员默认访问修饰符是 internal，不是 private
+    {{MEMBER_ACCESS}} let {{MEMBER_NAME}}1: {{MEMBER_TYPE}}1
+    {{MEMBER_ACCESS}} var {{MEMBER_NAME}}2: {{MEMBER_TYPE}}2
+
+    // 构造函数
+    public init({{MEMBER_NAME}}1: {{MEMBER_TYPE}}1, {{MEMBER_NAME}}2: {{MEMBER_TYPE}}2) {
+        this.{{MEMBER_NAME}}1 = {{MEMBER_NAME}}1
+        this.{{MEMBER_NAME}}2 = {{MEMBER_NAME}}2
+    }
+
+    // 成员函数
+    public func get{{MEMBER_NAME}}1(): {{MEMBER_TYPE}}1 {
+        {{MEMBER_NAME}}1
+    }
+
+    public func set{{MEMBER_NAME}}2(value: {{MEMBER_TYPE}}2): Unit {
+        this.{{MEMBER_NAME}}2 = value
+    }
+
+    // private 函数
+    private func internalHelper(): String {
+        "internal helper function"
+    }
+}
+
+// 使用示例
+main() {
+    let instance = {{CLASS_NAME}}(value1, value2)
+    println(instance.get{{MEMBER_NAME}}1())
+}

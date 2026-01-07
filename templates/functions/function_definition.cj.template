@@ -1,0 +1,37 @@
+/**
+ * 模板名称：函数定义
+ * 使用场景：定义仓颉函数
+ * 语法模块：第2.4节 - 函数
+ * 示例参考：examples/04_functions.cj
+ *
+ * 可配置参数：
+ * - FUNCTION_NAME: 函数名
+ * - RETURN_TYPE: 返回类型
+ * - PARAM_NAME: 参数名（多个）
+ * - PARAM_TYPE: 参数类型（多个）
+ * - ACCESS_MODIFIER: 访问修饰符（public/private/internal）
+ */
+
+// 基本函数定义
+{{ACCESS_MODIFIER}} func {{FUNCTION_NAME}}({{PARAM_NAME}}: {{PARAM_TYPE}}): {{RETURN_TYPE}} {
+    // 函数体
+    // 注意：函数参数默认是 let 不可变
+    // ⚠️ 易错点8：如需修改参数，使用 var 明确声明
+
+    // 返回值
+}
+
+// 带多个参数的函数
+{{ACCESS_MODIFIER}} func {{FUNCTION_NAME}}(
+    param1: Type1,
+    param2: Type2,
+    param3: Type3
+): {{RETURN_TYPE}} {
+    // 函数体
+}
+
+// 返回值简写（最后一个表达式自动作为返回值）
+{{ACCESS_MODIFIER}} func {{FUNCTION_NAME}}(param: Type): {{RETURN_TYPE}} {
+    // 最后一个表达式自动作为返回值
+    // 不需要显式 return
+}

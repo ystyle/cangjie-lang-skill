@@ -1,0 +1,13 @@
+/**
+ * 模板名称：Hello World
+ * 使用场景：仓颉语言的入门程序
+ * 语法模块：第1章 - 语言基础定义
+ * 示例参考：examples/01_variable_declaration.cj
+ *
+ * 可配置参数：
+ * - MESSAGE: 输出的消息内容
+ */
+
+main() {
+    println("{{MESSAGE}}")
+}

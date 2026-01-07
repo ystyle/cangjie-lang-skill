@@ -1,0 +1,59 @@
+/**
+ * 模板名称：单元测试
+ * 使用场景：编写仓颉单元测试
+ * 语法模块：第2.9节 - 单元测试
+ * 示例参考：examples/09_unit_test.cj
+ *
+ * 可配置参数：
+ * - TEST_CLASS_NAME: 测试类名
+ * - TEST_CASE_NAME: 测试用例名
+ * - FUNCTION_NAME: 被测试的函数名
+ */
+
+// 被测试的函数
+func {{FUNCTION_NAME}}(param: Type): ReturnType {
+    // 函数实现
+}
+
+// 测试类
+@Test
+class {{TEST_CLASS_NAME}} {
+    @TestCase
+    func test{{TEST_CASE_NAME}}() {
+        // 准备测试数据
+        let input = ...
+        let expected = ...
+
+        // 方式一：手动判断
+        if ({{FUNCTION_NAME}}(input) != expected) {
+            @Fail("{{FUNCTION_NAME}} failed")
+        }
+
+        // 方式二：Assert 条件
+        @Assert({{FUNCTION_NAME}}(input) == expected)
+
+        // 方式三：Assert 相等
+        @Assert({{FUNCTION_NAME}}(input), expected)
+    }
+
+    @TestCase
+    func testEdgeCase() {
+        // 测试边界情况
+        let result = {{FUNCTION_NAME}}(0)
+        @Assert(result, expectedResult)
+    }
+
+    @TestCase
+    func testNegativeCase() {
+        // 测试负数情况
+        let result = {{FUNCTION_NAME}}(-1)
+        @Assert(result, expectedResult)
+    }
+}
+
+/* 注意事项：
+ * 1. 使用 @Test 标记测试类
+ * 2. 使用 @TestCase 标记测试方法
+ * 3. 使用 @Assert 或 @Expect 进行断言
+ * 4. 使用 @Fail 标记测试失败
+ */

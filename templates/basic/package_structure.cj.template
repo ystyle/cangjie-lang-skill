@@ -1,0 +1,33 @@
+/**
+ * 模板名称：包结构
+ * 使用场景：定义仓颉包的基本结构
+ * 语法模块：第1章 - 语言基础定义
+ * 示例参考：examples/08_class.cj
+ *
+ * 可配置参数：
+ * - PACKAGE_NAME: 包名
+ * - CLASS_NAME: 主类名
+ */
+
+package {{PACKAGE_NAME}}
+
+{{ACCESS_MODIFIER}} class {{CLASS_NAME}} {
+    // 成员变量
+    private let name: String
+
+    // 构造函数
+    public init(name: String) {
+        this.name = name
+    }
+
+    // 成员函数
+    public func getName(): String {
+        name
+    }
+}
+
+// 入口函数
+main() {
+    let instance = {{CLASS_NAME}}("Example")
+    println(instance.getName())
+}
