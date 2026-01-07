@@ -551,8 +551,8 @@ main() {
     let value = Some(42)
 
     match (value) {
-        case Option<Int64>.Some(v) if v > 100 => println("Large: ${v}")
-        case Option<Int64>.Some(v) if v > 0 => println("Positive: ${v}")
+        case Option<Int64>.Some(v) where v > 100 => println("Large: ${v}")
+        case Option<Int64>.Some(v) where v > 0 => println("Positive: ${v}")
         case Option<Int64>.Some(0) => println("Zero")
         case Option<Int64>.Some(v) => println("Negative: ${v}")
         case Option<Int64>.None => println("None")
@@ -602,13 +602,13 @@ main() {
 }
 ```
 
-**修正方案2：使用守卫（guard）**
+**修正方案2：使用守卫（pattern guard）**
 ```cj
 main() {
     let name = "Alice"
 
     match (name) {
-        case n if n.startsWith("Hello") => println("greeting: ${n}")
+        case n where n.startsWith("Hello") => println("greeting: ${n}")
         case "Alice" => println("Alice")
         case _ => println("other")
     }

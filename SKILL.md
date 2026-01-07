@@ -659,6 +659,59 @@ main() {
 }
 ```
 
+#### Pattern Guard（守卫）
+
+在 case 的模式之后，可以使用 `where` 子句添加额外的条件判断（称为 pattern guard）。
+
+**语法**：`case 模式 where 条件 => 处理`
+
+⚠️ **重要**：使用 `where` 关键字，**不是** `if`
+
+**示例**：
+
+```cj
+enum RGBColor {
+    | Red(Int16)
+    | Green(Int16)
+    | Blue(Int16)
+}
+
+main() {
+    let c = RGBColor.Green(-100)
+    let cs = match (c) {
+        case Red(r) where r < 0 => "Red = 0"
+        case Red(r) => "Red = ${r}"
+        case Green(g) where g < 0 => "Green = 0"     // 匹配（因为 -100 < 0）
+        case Green(g) => "Green = ${g}"
+        case Blue(b) where b < 0 => "Blue = 0"
+        case Blue(b) => "Blue = ${b}"
+    }
+    println(cs)  // 输出：Green = 0
+}
+```
+
+**注意事项**：
+- `where` 后的条件表达式必须是 `Bool` 类型
+- pattern guard 在模式匹配成功后再进行条件判断
+- 多个 case 可以按顺序排列，从上到下匹配
+- ⚠️ **易错点**：不要使用 `if`，应该使用 `where`
+
+**错误示例**：
+```cj
+match (value) {
+    case n if n > 0 => println("positive")  // ❌ 编译错误：不是 if
+    case _ => println("other")
+}
+```
+
+**正确写法**：
+```cj
+match (value) {
+    case n where n > 0 => println("positive")  // ✅ 使用 where
+    case _ => println("other")
+}
+```
+
 **示例参考**：`examples/06_pattern_matching.cj`
 
 ---
