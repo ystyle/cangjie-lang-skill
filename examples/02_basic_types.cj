@@ -39,14 +39,14 @@ main() {
         for multi-line text
         '''
 
-    // 3. 多行原始字符串字面量（转义规则不适用）
+    // 3. 多行原始字符串字面量（转义规则不适用，不支持插值）
     let rawString1 = ##"\n"##  // \n 不是换行符，是 \ 和 n 两个字符
     let rawString2 = ###"
         Hello,
         Cangjie
         Lang"###  // 保留换行和缩进
 
-    // 字符串插值（所有三种字符串字面量都支持）
+    // 字符串插值（仅适用于单行和多行字符串字面量，不适用于多行原始字符串字面量）
     let name = "Cangjie"
     let count = 10
     let message = "Hello, ${name}! Count: ${count * count}"
