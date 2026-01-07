@@ -12,6 +12,7 @@
  * - Lambda表达式
  * - 高阶函数
  * - 函数类型
+ * - 命名参数（Named Parameters）
  */
 import std.io.println
 
@@ -90,6 +91,28 @@ func lambdaExamples() {
     println("Lambda as parameter: ${result}")
 }
 
+// 命名参数示例
+func namedParameterExamples() {
+    // 带默认值的命名参数
+    func greet(name!: String, age!: Int64 = 25, city!: String = "北京") {
+        println("姓名: ${name}, 年龄: ${age}, 城市: ${city}")
+    }
+
+    println("\n=== 命名参数示例 ===")
+
+    // 1. 使用命名参数（可以不按顺序）
+    greet(name: "张三", age: 30, city: "上海")
+
+    // 2. 使用默认值（省略 age 和 city）
+    greet(name: "李四")  // 输出: 姓名: 李四, 年龄: 25, 城市: 北京
+
+    // 3. 部分使用默认值
+    greet(name: "王五", city: "深圳")  // 输出: 姓名: 王五, 年龄: 25, 城市: 深圳
+
+    // 4. 命名参数可以不按顺序
+    greet(age: 35, name: "赵六", city: "广州")
+}
+
 main() {
     println("add(10, 20): ${add(10, 20)}")
     println("multiply(10, 20): ${multiply(10, 20)}")
@@ -97,4 +120,5 @@ main() {
     println("modify(10): ${modify(10)}")
 
     lambdaExamples()
+    namedParameterExamples()
 }

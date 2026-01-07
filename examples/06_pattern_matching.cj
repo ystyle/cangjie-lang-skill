@@ -13,6 +13,7 @@
  * - enum 模式
  * - 模式嵌套
  * - case 多行语句（直接换行，不用{}）
+ * - if let pattern 模式匹配
  */
 // 基础类型示例
 class Base {
@@ -104,6 +105,34 @@ func patternMatchingExamples() {
         case (Command.SetTimeUnit(TimeUnit.Year(year)), _) => println("Set year ${year}")
         case (_, Command.SetTimeUnit(TimeUnit.Month(month))) => println("Set month ${month}")
         case _ => println("Other command")
+    }
+
+    // 7. if let pattern 模式匹配
+    println("\n=== if let pattern 模式匹配 ===")
+    let optA = Option<Int64>.Some(3)
+    let optB = Option<Int64>.Some(1)
+    let optC = Option<Int64>.None
+
+    // 单个模式匹配
+    if (let Some(value) <- optA) {
+        println("optA 有值: ${value}")
+    }
+
+    // 多个模式匹配（使用 &&）
+    if (let Some(a) <- optA && let Some(b) <- optB) {
+        println("两个 Option 都有值: ${a} 和 ${b}")
+    }
+
+    // 多个模式匹配，其中一个为 None
+    if (let Some(a) <- optA && let Some(c) <- optC) {
+        println("不应该执行这里")
+    } else {
+        println("optC 为 None，条件不满足")
+    }
+
+    // 在条件中使用绑定的值
+    if (let Some(x) <- optA && let Some(y) <- optB && x > y) {
+        println("${x} > ${y}")
     }
 }
 
