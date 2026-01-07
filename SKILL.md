@@ -408,21 +408,15 @@ func add(a: Int64, b: Int64): Int64 {
 }
 ```
 
-**重要说明**：方法（class/enum 的成员函数）的参数**不能使用 `var` 修饰符**。只有顶层函数可以使用 `var` 修饰参数。
+⚠️ **重要**：仓颉**不支持使用 `var` 修饰函数参数**（无论是顶层函数还是成员方法）。
+
+如果需要修改参数值，应该使用局部变量：
 
 ```cj
-// 顶层函数可以使用 var
-func modify(var a: Int64): Int64 {
-    a = a + 1  // 现在可以修改
-    return a
-}
-
-// class 方法的参数不能使用 var
-class Example {
-    public func method(var a: Int64): Int64 {  // ❌ 编译错误
-        a = a + 1
-        return a
-    }
+func modify(a: Int64): Int64 {
+    var result = a
+    result = result + 1  // 修改局部变量
+    return result
 }
 ```
 
