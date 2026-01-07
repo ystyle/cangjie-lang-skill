@@ -42,24 +42,33 @@ main() {
     // 创建 ArrayList
     let list = ArrayList<Int64>()
 
-    // 添加元素
-    list.append(1)
-    list.append(2)
-    list.append(3)
-    list.add(4)  // 也可以用 add
+    // 添加元素（使用 add 方法）
+    list.add(1, at: 0)  // 在位置 0 添加 1
+    list.add(2, at: 1)  // 在位置 1 添加 2
+    list.add(3, at: 2)  // 在位置 2 添加 3
 
-    println("ArrayList size: ${list.size}")  // 输出: 4
+    // 或使用 add 添加整个数组
+    let arr = [4, 5]
+    list.add(all: arr)  // list: [1, 2, 3, 4, 5]
 
-    // 访问元素
+    println("ArrayList size: ${list.size}")  // 输出: 5
+
+    // 访问元素（使用 get 方法，返回 Option）
+    let value = list.get(0)
+    match (value) {
+        case Option<Int64>.Some(v) => println("list.get(0) = ${v}")
+        case Option<Int64>.None => println("Not found")
+    }
+
+    // 或使用下标访问
     println("list[0] = ${list[0]}")  // 输出: 1
 
     // 修改元素
     list[0] = 10
-    println("After modification: list[0] = ${list[0]}")  // 输出: 10
 
     // 删除元素
-    list.remove(0)  // 移除第一个元素
-    println("After removal, size: ${list.size}")  // 输出: 3
+    list.remove(at: 0)  // 移除第一个元素
+    println("After removal, size: ${list.size}")  // 输出: 4
 
     // 遍历
     println("ArrayList elements:")
@@ -116,13 +125,15 @@ main() {
 
     // 或者创建空 HashMap
     let emptyMap = HashMap<String, Int64>()
-    emptyMap.put("D", 4)
-    emptyMap["E"] = 5
 
-    // 访问元素（返回 Option）
-    let valueA = map["A"]
+    // 添加元素（使用 add 方法）
+    emptyMap.add("D", 4)
+    emptyMap.add("E", 5)
+
+    // 访问元素（使用 get 方法，返回 Option）
+    let valueA = map.get("A")
     match (valueA) {
-        case Option<Int64>.Some(v) => println("map['A'] = ${v}")
+        case Option<Int64>.Some(v) => println("map.get('A') = ${v}")
         case Option<Int64>.None => println("map['A'] not found")
     }
 
@@ -156,8 +167,9 @@ main() {
 
     println("\nArrayList:")
     println("  - 创建: ArrayList<T>()")
-    println("  - 添加: append() 或 add()")
-    println("  - 删除: remove(index)")
+    println("  - 添加: add(element, at: index) 或 add(all: array)")
+    println("  - 删除: remove(at: index)")
+    println("  - 访问: list[index] 或 list.get(index)（返回 Option）")
     println("  - 修改: list[index] = value")
 
     println("\nHashSet:")
@@ -169,8 +181,8 @@ main() {
 
     println("\nHashMap:")
     println("  - 创建: HashMap<K, V>() 或字面量")
-    println("  - 添加: put(key, value)")
-    println("  - 访问: map[key] （返回 Option）")
+    println("  - 添加: add(key, value)")
+    println("  - 访问: map.get(key)（返回 Option）或 map[key]")
     println("  - 删除: remove(key)")
     println("  - 检查: contains(key)")
 }

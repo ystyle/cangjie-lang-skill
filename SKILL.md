@@ -945,22 +945,29 @@ main() {
     // 创建 ArrayList
     let list = ArrayList<Int64>()
 
-    // 添加元素
-    list.append(1)
-    list.append(2)
-    list.append(3)
+    // 添加元素（使用 add 方法）
+    list.add(1, at: 0)  // 在位置 0 添加 1
+    list.add(2, at: 1)  // 在位置 1 添加 2
 
-    // 使用 add 方法
-    list.add(4)
+    // 或使用 add 添加整个数组
+    let arr = [3, 4, 5]
+    list.add(all: arr)  // list: [1, 2, 3, 4, 5]
 
-    // 访问元素
+    // 访问元素（使用 get 方法，返回 Option）
+    let value = list.get(0)
+    match (value) {
+        case Option<Int64>.Some(v) => println("First: ${v}")
+        case Option<Int64>.None => println("Not found")
+    }
+
+    // 或使用下标访问
     println(list[0])  // 输出: 1
 
     // 修改元素
     list[0] = 10
 
     // 删除元素
-    list.remove(0)  // 移除第一个元素
+    list.remove(at: 0)  // 移除第一个元素
 
     // 获取大小
     println(list.size)
@@ -1023,11 +1030,18 @@ main() {
     // 或者空 HashMap
     let emptyMap = HashMap<String, Int64>()
 
-    // 添加元素
-    emptyMap.put("D", 4)
+    // 添加元素（使用 add 方法）
+    emptyMap.add("D", 4)
 
-    // 访问元素
-    println(map["A"])  // 输出: Some(1)
+    // 访问元素（使用 get 方法，返回 Option）
+    let value = map.get("A")
+    match (value) {
+        case Option<Int64>.Some(v) => println("A = ${v}")
+        case Option<Int64>.None => println("Not found")
+    }
+
+    // 或使用下标访问
+    println(map["A"])  // 输出: 1
 
     // 修改元素
     map["A"] = 10
@@ -1049,18 +1063,29 @@ main() {
 
 **添加元素**：
 - Array：不能添加（大小固定）
-- ArrayList：`append(element)` 或 `add(element)`
+- ArrayList：`add(element, at: index)` 或 `add(all: array)`
 - HashSet：`add(element)`
-- HashMap：`put(key, value)` 或 `map[key] = value`
+- HashMap：`add(key, value)` 或 `map[key] = value`
+
+**访问元素**：
+- Array：`array[index]` 或 `array.get(index)`
+- ArrayList：`list[index]` 或 `list.get(index)`（返回 Option）
+- HashMap：`map[key]` 或 `map.get(key)`（返回 Option）
 
 **修改元素**：
 - 所有集合都支持 `[]` 下标方式修改
 
 **删除元素**：
 - Array：不能删除
-- ArrayList：`remove(index)` 或 `removeAt(index)`
+- ArrayList：`remove(at: index)`
 - HashSet：`remove(element)`
 - HashMap：`remove(key)`
+
+**其他常用方法**：
+- `size` - 获取元素个数（属性）
+- `clear()` - 清空所有元素（ArrayList, HashSet, HashMap）
+- `contains(element)` - 检查是否包含（HashSet, HashMap）
+- `get(index)` - 获取元素（ArrayList, HashMap，返回 Option）
 
 **示例参考**：`examples/12_collections.cj`
 
