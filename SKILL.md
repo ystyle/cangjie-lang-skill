@@ -906,6 +906,311 @@ main() {
 
 ---
 
+### 2.12 集合
+
+仓颉提供了多种集合类型，适用于不同的使用场景：
+
+#### 集合类型
+
+**1. Array** - 固定大小数组
+- **使用场景**：不需要增加和删除元素，但需要修改元素
+- **字面量**：`let arr: Array<String> = ["A", "B", "C"]`
+- **特点**：大小固定，内存连续，访问速度快
+
+```cj
+main() {
+    // 创建 Array
+    let arr: Array<String> = ["A", "B", "C"]
+
+    // 访问元素（使用下标）
+    println(arr[0])  // 输出: A
+
+    // 修改元素
+    arr[0] = "X"
+    println(arr[0])  // 输出: X
+
+    // 获取大小
+    println(arr.size)  // 输出: 3
+}
+```
+
+**2. ArrayList** - 动态数组
+- **使用场景**：需要频繁对元素增删查改
+- **特点**：大小可变，支持动态添加和删除元素
+
+```cj
+import std.collection.ArrayList
+
+main() {
+    // 创建 ArrayList
+    let list = ArrayList<Int64>()
+
+    // 添加元素
+    list.append(1)
+    list.append(2)
+    list.append(3)
+
+    // 使用 add 方法
+    list.add(4)
+
+    // 访问元素
+    println(list[0])  // 输出: 1
+
+    // 修改元素
+    list[0] = 10
+
+    // 删除元素
+    list.remove(0)  // 移除第一个元素
+
+    // 获取大小
+    println(list.size)
+}
+```
+
+**3. HashSet** - 哈希集合
+- **使用场景**：希望每个元素都是唯一的
+- **特点**：元素唯一，快速查找
+
+```cj
+import std.collection.HashSet
+
+main() {
+    // 创建 HashSet
+    let set = HashSet<Int64>()
+
+    // 添加元素
+    set.add(1)
+    set.add(2)
+    set.add(3)
+    set.add(1)  // 重复元素不会被添加
+
+    // 检查是否包含
+    if (set.contains(2)) {
+        println("包含 2")
+    }
+
+    // 获取大小
+    println(set.size)  // 输出: 3
+
+    // 删除元素
+    set.remove(2)
+}
+```
+
+**4. HashMap** - 哈希映射
+- **使用场景**：希望存储一系列的映射关系（键值对）
+- **字面量**：`let map: HashMap<String, Int> = HashMap(("A", 1), ("B", 2))` 或 `HashMap([("A", 1), ("B", 2)])`
+- **特点**：键值对存储，快速查找
+
+```cj
+import std.collection.HashMap
+
+main() {
+    // 创建 HashMap（使用字面量）
+    let map: HashMap<String, Int64> = HashMap(
+        ("A", 1),
+        ("B", 2),
+        ("C", 3)
+    )
+
+    // 或者使用方括号
+    let map2: HashMap<String, Int64> = HashMap([
+        ("A", 1),
+        ("B", 2),
+        ("C", 3)
+    ])
+
+    // 或者空 HashMap
+    let emptyMap = HashMap<String, Int64>()
+
+    // 添加元素
+    emptyMap.put("D", 4)
+
+    // 访问元素
+    println(map["A"])  // 输出: Some(1)
+
+    // 修改元素
+    map["A"] = 10
+
+    // 检查是否包含键
+    if (map.contains("B")) {
+        println("包含键 B")
+    }
+
+    // 删除元素
+    map.remove("C")
+
+    // 获取大小
+    println(map.size)
+}
+```
+
+#### 集合常用方法
+
+**添加元素**：
+- Array：不能添加（大小固定）
+- ArrayList：`append(element)` 或 `add(element)`
+- HashSet：`add(element)`
+- HashMap：`put(key, value)` 或 `map[key] = value`
+
+**修改元素**：
+- 所有集合都支持 `[]` 下标方式修改
+
+**删除元素**：
+- Array：不能删除
+- ArrayList：`remove(index)` 或 `removeAt(index)`
+- HashSet：`remove(element)`
+- HashMap：`remove(key)`
+
+**示例参考**：`examples/12_collections.cj`
+
+---
+
+### 2.13 包
+
+仓颉使用包（package）来组织代码，提供模块化和命名空间管理。
+
+#### 包声明
+
+**基本语法**：
+```cj
+package package.name
+```
+
+**目录结构与包声明对应**：
+
+```
+src
+└── directory_0
+    ├── directory_1
+    │   ├── a.cj          // package demo.directory_0.directory_1
+    │   └── b.cj          // package demo.directory_0.directory_1
+    └── c.cj              // package demo.directory_0
+└── main.cj              // package demo
+```
+
+**示例**：
+```cj
+// a.cj
+package demo.directory_0.directory_1
+
+public func funcA() {
+    println("Function A")
+}
+
+// b.cj
+package demo.directory_0.directory_1
+
+public func funcB() {
+    println("Function B")
+}
+
+// c.cj
+package demo.directory_0
+
+public func funcC() {
+    println("Function C")
+}
+
+// main.cj
+package demo
+
+import demo.directory_0.directory_1.{funcA, funcB}
+import demo.directory_0.funcC
+
+main() {
+    funcA()  // 调用 demo.directory_0.directory_1.funcA
+    funcB()  // 调用 demo.directory_0.directory_1.funcB
+    funcC()  // 调用 demo.directory_0.funcC
+}
+```
+
+#### 导入（import）
+
+**基本语法**：
+```cj
+package currentPackage
+
+import std.math.*              // 导入 std.math 的所有内容
+import package1.foo            // 导入 package1.foo
+import {package1.foo, package2.bar, package1.MyClass}  // 导入多个
+```
+
+**使用示例**：
+```cj
+package demo
+
+import std.math.*
+import package1.helper
+import {package1.MyClass, package2.Utils}
+
+main() {
+    // 直接使用导入的方法和类型
+    let result = pow(2, 3)    // std.math.pow
+    helper()                  // package1.helper
+    let obj = MyClass()       // package1.MyClass
+    Utils.doSomething()       // package2.Utils
+}
+```
+
+#### 导入方式
+
+**1. 导入所有（通配符）**：
+```cj
+import std.math.*
+// 可以直接使用 std.math 中的所有内容
+let value = sqrt(16)
+```
+
+**2. 导入特定项**：
+```cj
+import std.math.pi
+// 只能使用 pi
+println(pi)
+```
+
+**3. 导入多个项**：
+```cj
+import {std.math.sin, std.math.cos}
+// 可以使用 sin 和 cos
+```
+
+**4. 重命名导入**：
+```cj
+import std.math as math
+let value = math.sqrt(16)
+```
+
+#### 访问修饰符与包
+
+- **private**：仅当前文件可见
+- **internal**：当前包及子包可见（**默认**）
+- **public**：模块内外均可见
+
+**示例**：
+```cj
+package demo.math
+
+// 默认为 internal，仅 demo.math 及其子包可见
+func internalFunc() {
+    println("internal")
+}
+
+// public，任何地方都可访问
+public func publicFunc() {
+    println("public")
+}
+
+// private，仅当前文件可见
+private func privateFunc() {
+    println("private")
+}
+```
+
+**示例参考**：`examples/13_package_import.cj`
+
+---
+
 ## 第3章：任务处理流程
 
 ### 3.1 代码生成流程
