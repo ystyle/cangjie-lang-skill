@@ -2,12 +2,13 @@
  * 示例名称：函数定义与使用
  * 语法模块：第2.4节 - 函数
  * 难度：intermediate
- * ⚠️ 易错点：⚠️易错点8（函数参数默认是let不可变，方法不能使用var）、⚠️易错点9（Lambda可立即调用）
+ * ⚠️ 易错点：⚠️易错点2（函数参数默认是let不可变，不支持var修饰）、⚠️易错点12（Lambda可立即调用）
  *
  * 本示例演示：
  * - 函数定义
  * - 返回值简写
  * - 函数参数不可变（let）
+ * - 使用局部变量修改参数值
  * - Lambda表达式
  * - 高阶函数
  * - 函数类型
@@ -26,23 +27,36 @@ func multiply(a: Int64, b: Int64): Int64 {
 
 // ⚠️ 函数参数默认是let不可变
 func tryModify(a: Int64): Int64 {
-    // a = a + 1  // 编译错误：不能修改let参数
+    // a = a + 1  // ❌ 编译错误：不能修改let参数
     return a
 }
 
-// 顶层函数可以使用var声明可变参数
-func modify(var a: Int64): Int64 {
-    a = a + 1  // 现在可以修改了
-    return a
+// ❌ 编译错误：函数参数不能显式使用 let 或 var 修饰符
+// func wrong1(let a: Int64): Int64 {  // ❌ 编译错误
+//     return a
+// }
+//
+// func wrong2(var a: Int64): Int64 {  // ❌ 编译错误
+//     a = a + 1
+//     return a
+// }
+//
+// class Example {
+//     public func method(var a: Int64): Int64 {  // ❌ 编译错误
+//         a = a + 1
+//         return a
+//     }
+// }
+
+// ✅ 正确做法：使用局部变量
+func modify(a: Int64): Int64 {
+    var result = a
+    result = result + 1  // ✅ 修改局部变量
+    return result
 }
 
-// ⚠️ 重要：class 方法的参数不能使用 var
-class Example {
-    public func method(var a: Int64): Int64 {  // ❌ 编译错误
-        a = a + 1
-        return a
-    }
-}
+// ⚠️ 重要：函数参数不能显式使用 let 或 var 修饰符
+// （包括顶层函数、class成员方法、struct成员方法等所有函数，参数默认就是 let 不可变的）
 
 // 高阶函数（函数作为参数）
 func applyFunction(a: Int64, b: Int64, f: (Int64, Int64) -> Int64): Int64 {
