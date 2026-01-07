@@ -591,13 +591,11 @@ main() {
     let name = "Alice"
 
     match (name) {
-        case n => {
-            if (n.startsWith("Hello")) {
+        case n => if (n.startsWith("Hello")) {
                 println("greeting: ${n}")
             } else {
                 println("name: ${n}")
             }
-        }
     }
 }
 ```
@@ -929,9 +927,7 @@ main() {
     let x = 10
 
     match (x) {
-        case 1 => {
-            println("one")  // ❌ 不需要 {}
-        }
+        case 1 => { println("one") }  // ❌ 编译错误：case 不能使用 {}
         case _ => println("other")
     }
 }
@@ -943,12 +939,9 @@ main() {
     let x = 10
 
     match (x) {
-        case 1 => println("one")       // ✅ 直接使用 =>
-        case 10 => {
-            // 如果需要多行语句，可以使用代码块
-            println("ten")
-            println("lucky number")
-        }
+        case 1 => println("one")        // ✅ 单行直接写
+        case 10 => println("ten")
+                   println("lucky number")  // ✅ 多行直接换行，不用 {}
         case _ => println("other")
     }
 }

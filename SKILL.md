@@ -512,7 +512,7 @@ enum RGBColor {
 
 **基本语法**：
 
-⚠️ **注意**：case 不需要 `{}` 括号，且**使用 `{}` 会导致编译错误**
+⚠️ **重要**：case 后的语句**不需要 `{}` 括号**，多行语句直接换行即可
 
 ```cj
 match (待匹配值) {
@@ -522,25 +522,13 @@ match (待匹配值) {
 }
 ```
 
-**多行语句**：
+**多行语句**：直接换行，不需要 `{}`
 
 ```cj
 match (value) {
-    case 1 => println("one")              // ✅ 单行直接写
-    case 2 => {
-        // ✅ 多行使用代码块，注意 { 在新行
-        println("two")
-        println("second number")
-    }
-    case _ => println("other")
-}
-```
-
-⚠️ **错误示例**：
-
-```cj
-match (value) {
-    case 1 => { println("one") }  // ❌ 编译错误：同一行不能使用 { }
+    case 1 => println("one")
+    case 2 => println("two")
+               println("second number")  // ✅ 多行直接换行
     case _ => println("other")
 }
 ```

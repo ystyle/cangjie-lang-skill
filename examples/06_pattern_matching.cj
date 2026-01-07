@@ -12,7 +12,7 @@
  * - 类型模式
  * - enum 模式
  * - 模式嵌套
- * - case 多行语句（不需要{}）
+ * - case 多行语句（直接换行，不用{}）
  */
 // 基础类型示例
 class Base {
@@ -52,13 +52,10 @@ func patternMatchingExamples() {
     println("\n=== case 多行语句 ===")
     let y = 10
     match (y) {
-        case 1 => println("one")  // ✅ 单行直接写
-        case 10 => {
-            // ✅ 多行使用代码块，注意 { 在新行
-            println("ten")
-            println("lucky number")
-            println("perfect score")
-        }
+        case 1 => println("one")
+        case 10 => println("ten")
+                   println("lucky number")
+                   println("perfect score")
         case _ => println("other")
     }
 
