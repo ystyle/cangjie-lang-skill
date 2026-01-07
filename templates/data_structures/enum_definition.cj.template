@@ -1,0 +1,49 @@
+/**
+ * 模板名称：Enum 定义
+ *
+ * 使用场景：
+ * - 定义一组相关的常量值
+ * - 表示有限的状态集合
+ * - 实现代数数据类型（ADT）
+ *
+ * 语法模块：第2.5节 - 枚举类型
+ * 示例参考：examples/05_enum.cj
+ *
+ * 可配置参数：
+ * - ENUM_NAME: 枚举类型名
+ * - CONSTRUCTOR_NAME: 构造器名称（多个）
+ * - PARAM_TYPE: 构造器参数类型（多个）
+ */
+
+// 基本枚举（无参构造器）
+enum {{ENUM_NAME}} {
+    | {{CONSTRUCTOR_NAME}}1
+    | {{CONSTRUCTOR_NAME}}2
+    | {{CONSTRUCTOR_NAME}}3
+}
+
+// 带参数的枚举
+enum {{ENUM_NAME}} {
+    | {{CONSTRUCTOR_NAME}}1({{PARAM_TYPE}}1)
+    | {{CONSTRUCTOR_NAME}}2({{PARAM_TYPE}}2)
+    | {{CONSTRUCTOR_NAME}}3({{PARAM_TYPE}}1, {{PARAM_TYPE}}2)
+}
+
+// ⚠️ 注意事项：
+// 1. 枚举至少需要存在一个有名字的构造器
+// 2. 构造器之间使用 | 分隔
+// 3. 第一个构造器之前的 | 是可选的
+
+// 使用示例
+main() {
+    // 创建枚举值
+    let value1 = {{ENUM_NAME}}.{{CONSTRUCTOR_NAME}}1
+    let value2 = {{ENUM_NAME}}.{{CONSTRUCTOR_NAME}}2(42)
+
+    // 模式匹配
+    match (value2) {
+        case {{ENUM_NAME}}.{{CONSTRUCTOR_NAME}}1 => println("Constructor 1")
+        case {{ENUM_NAME}}.{{CONSTRUCTOR_NAME}}2(v) => println("Constructor 2 with value: ${v}")
+        case {{ENUM_NAME}}.{{CONSTRUCTOR_NAME}}3(v1, v2) => println("Constructor 3: ${v1}, ${v2}")
+    }
+}
