@@ -1,35 +1,9 @@
-# 仓颉语言代码生成与分析工作手册
+---
+name: cangjie-lang
+description: Cangjie programming language code generation and analysis expert. Use this when users need to write or analyze Cangjie code.
+---
 
-```yaml
-name: "cangjie-lang"
-description: "仓颉（Cangjie）编程语言代码生成与分析专家手册 - 提供39个代码示例、19个易错点检查、完整的语法规则和模式匹配指南，专注于代码生成和代码分析两大核心场景"
-version: "1.0.0"
-author: "Cangjie Language Community"
-tags:
-  - "cangjie"
-  - "programming-language"
-  - "code-generation"
-  - "code-analysis"
-  - "chinese-language"
-  - "syntax-guide"
-capabilities:
-  - "generate-cangjie-code"
-  - "analyze-cangjie-code"
-  - "pattern-matching"
-  - "type-system"
-  - "error-detection"
-difficulty: "intermediate"
-scenarios:
-  - "生成仓颉语言代码"
-  - "分析仓颉代码语法"
-  - "检测常见错误模式"
-  - "提供代码修正建议"
-resources:
-  - "examples/ - 39个代码示例"
-  - "templates/ - 15-20个代码模板"
-  - "reference/ - 10个参考章节"
-  - "MCP - 仓颉文档查询"
-```
+# 仓颉语言代码生成与分析工作手册
 
 ---
 
@@ -1720,11 +1694,11 @@ list_documents(category="libs", subcategory="std")
 
 ### A.2 操作符
 
-- 算术：`+`、`-`、`*`、`/`、`%`
-- 比较：`==`、`!=`、`<`、`>`、`<=`、`>=`
-- 逻辑：`&&`、`||`、`!`
-- 范围：`..`、`..=`
-- 模式匹配：`<-`、`=>`
+- 算术：加 +、减 -、乘 *、除 /、取模 %
+- 比较：相等 ==、不等 !=、小于 <、大于 >、小于等于 <=、大于等于 >=
+- 逻辑：与 &&、或 ||、非 !
+- 范围：.. 半开区间、..= 闭区间
+- 模式匹配：模式绑定 <-、case 分隔 =>
 
 ### A.3 常用标准库
 
