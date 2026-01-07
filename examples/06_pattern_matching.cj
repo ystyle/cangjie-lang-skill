@@ -52,11 +52,9 @@ func patternMatchingExamples() {
     println("\n=== case 多行语句 ===")
     let y = 10
     match (y) {
-        case 1 => {
-            println("one")
-            println("first number")  // ✅ 可以使用代码块
-        }
+        case 1 => println("one")  // ✅ 单行直接写
         case 10 => {
+            // ✅ 多行使用代码块，注意 { 在新行
             println("ten")
             println("lucky number")
             println("perfect score")
